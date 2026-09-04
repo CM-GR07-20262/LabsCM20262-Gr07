@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Labs20262Gr07">
         <activity
-            android:name=".MainActivity"
+            android:name=".PersonalDataActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Labs20262Gr07"
