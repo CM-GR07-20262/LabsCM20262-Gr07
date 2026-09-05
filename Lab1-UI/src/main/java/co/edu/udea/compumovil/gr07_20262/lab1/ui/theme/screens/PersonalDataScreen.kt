@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,9 +24,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.edu.udea.compumovil.gr07_20262.lab1.R
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.RadioButton
+
 
 @Composable
 fun PersonalDataScreen() {
@@ -41,18 +51,24 @@ fun PersonalDataScreen() {
 @Preview
 @Composable
 private fun PreviewNameInput() {
-  NameInput()
+  NameInput("Nombres", "", {})
 }
 
 @Composable
-fun NameInput() {
-  var name by remember { mutableStateOf("") }
-  var onChangeName = { new: String -> name = new }
-
+fun NameInput(
+  label: String,
+  value: String,
+  onValueChange: (String) -> Unit  // "recibe un String y no devuelve nada"
+) {
   TextField(
-    label = { Text("Escribe tu nombre") },
-    value = name,
-    onValueChange = onChangeName,
+    label = { Text(label) },
+    value = value,
+    onValueChange = onValueChange,
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Text,
+      capitalization = KeyboardCapitalization.Words, //Poner primera letra en mayuscula
+      autoCorrectEnabled = false //Quitar el autocorrector
+    ),
     leadingIcon = {
       Icon(
         painter = painterResource(R.drawable.user),
@@ -63,6 +79,61 @@ fun NameInput() {
   )
 }
 
+@Composable
+fun SexoSelector(sexo: String, onSexoChange: (String) -> Unit) {
+  Column {
+    Text("Sexo:")
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      RadioButton(
+        selected = sexo == "Hombre",
+        onClick = { onSexoChange("Hombre") }
+      )
+      Text("Hombre")
+
+      Spacer(modifier = Modifier.width(16.dp))
+
+      RadioButton(
+        selected = sexo == "Mujer",
+        onClick = { onSexoChange("Mujer") }
+      )
+      Text("Mujer")
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GradoEscolaridadSelector(seleccionado: String, onSeleccionChange: (String) -> Unit) {
+  val opciones = listOf("Primaria", "Secundaria", "Universitaria", "Otro")
+  var expanded by remember { mutableStateOf(false) }
+
+  ExposedDropdownMenuBox(
+    expanded = expanded,
+    onExpandedChange = { expanded = !expanded }
+  ) {
+    TextField(
+      value = seleccionado,
+      onValueChange = {},
+      readOnly = true,
+      label = { Text("Grado de escolaridad") },
+      modifier = Modifier.menuAnchor()
+    )
+    ExposedDropdownMenu(
+      expanded = expanded,
+      onDismissRequest = { expanded = false }
+    ) {
+      opciones.forEach { opcion ->
+        DropdownMenuItem(
+          text = { Text(opcion) },
+          onClick = {
+            onSeleccionChange(opcion)
+            expanded = false
+          }
+        )
+      }
+    }
+  }
+}
 
 @Preview
 @Composable
@@ -84,19 +155,21 @@ fun TopBar() {
 
 @Composable
 fun Content(paddingValues: PaddingValues) {
-  Box(Modifier.padding(paddingValues)) {
+  var nombres by remember { mutableStateOf("") }
+  var apellidos by remember { mutableStateOf("") }
+  var sexo by remember { mutableStateOf("") }
+  var gradoEscolaridad by remember { mutableStateOf("") }
 
+  Box(Modifier.padding(paddingValues)) {
     Column(
       Modifier.padding(16.dp),
       horizontalAlignment = Alignment.Start,
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      NameInput()
-      NameInput()
-      NameInput()
-      NameInput()
-      NameInput()
-
+      NameInput("Nombres *", nombres) { nombres = it }
+      NameInput("Apellidos *", apellidos) { apellidos = it }
+      SexoSelector(sexo) { sexo = it }
+      GradoEscolaridadSelector(gradoEscolaridad) { gradoEscolaridad = it }
     }
   }
 }
