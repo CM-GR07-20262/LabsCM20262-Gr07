@@ -1,6 +1,7 @@
 package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.screens
 
 import android.graphics.Paint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,10 +32,21 @@ import androidx.compose.ui.unit.dp
 import co.edu.udea.compumovil.gr07_20262.lab1.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 
 @Composable
@@ -76,6 +88,28 @@ fun NameInput(
         tint = MaterialTheme.colorScheme.primary
       )
     }
+  )
+}
+
+@Composable
+fun FechaNacimientoSelector(
+  fechaNacimiento: String,
+  onFechaClick: () -> Unit,
+  modifier: Modifier = Modifier
+){
+  OutlinedTextField(
+    value = fechaNacimiento,
+    onValueChange = {},
+    label = { Text("Fecha de nacimiento *") },
+    modifier = modifier
+      .fillMaxWidth()
+      .clickable { onFechaClick() },
+    enabled = false,    // Desabilitamos la escritura directa para obligar a utilizar el Picker
+    colors = OutlinedTextFieldDefaults.colors(
+      disabledTextColor = MaterialTheme.colorScheme.onSurface,
+      disabledBorderColor = MaterialTheme.colorScheme.outline,
+      disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
   )
 }
 
@@ -153,12 +187,18 @@ fun TopBar() {
   )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(paddingValues: PaddingValues) {
   var nombres by remember { mutableStateOf("") }
   var apellidos by remember { mutableStateOf("") }
+  var fechaNacimiento by remember { mutableStateOf("") }
   var sexo by remember { mutableStateOf("") }
   var gradoEscolaridad by remember { mutableStateOf("") }
+
+  // Estados para el DatePicker
+  var mostrarDatePicker by remember { mutableStateOf(false) }
+  val datePickerState = rememberDatePickerState()
 
   Box(Modifier.padding(paddingValues)) {
     Column(
@@ -168,8 +208,40 @@ fun Content(paddingValues: PaddingValues) {
     ) {
       NameInput("Nombres *", nombres) { nombres = it }
       NameInput("Apellidos *", apellidos) { apellidos = it }
+      FechaNacimientoSelector(
+        fechaNacimiento = fechaNacimiento,
+        onFechaClick = { mostrarDatePicker = true }
+      )
       SexoSelector(sexo) { sexo = it }
       GradoEscolaridadSelector(gradoEscolaridad) { gradoEscolaridad = it }
+    }
+
+    // Lógica para dialogo flotante (Se visualiza solo si mostrarDatePicker es true)
+    if (mostrarDatePicker) {
+      DatePickerDialog(
+        onDismissRequest = { mostrarDatePicker = false },
+        confirmButton = {
+          TextButton(onClick = {
+            val dateMillis = datePickerState.selectedDateMillis
+            if (dateMillis != null){
+              // Formatear fecha
+              val formatter = SimpleDateFormat("dd/MM/yyy", Locale.getDefault())
+              formatter.timeZone = TimeZone.getTimeZone("UTC")
+              fechaNacimiento = formatter.format(Date(dateMillis))
+            }
+            mostrarDatePicker = false // Oculta selector
+          }) {
+            Text("Aceptar")
+          }
+        },
+        dismissButton = {
+          TextButton(onClick = { mostrarDatePicker = false }) {
+            Text("Cancelar")
+          }
+        }
+      ) {
+        DatePicker(state = datePickerState)
+      }
     }
   }
 }
