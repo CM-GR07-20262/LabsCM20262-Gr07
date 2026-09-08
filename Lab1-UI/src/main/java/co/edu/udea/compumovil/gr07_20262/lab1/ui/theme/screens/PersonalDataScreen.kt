@@ -36,7 +36,7 @@ import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.T
 
 @Composable
 fun PersonalDataScreen(
-  //onSiguienteClick: () -> Unit
+
 ) {
 
   Scaffold(
@@ -52,7 +52,9 @@ fun Content(
   paddingValues: PaddingValues,
   onSiguienteClick: () -> Unit
 ) {
-  // Orientación
+  val onSiguienteClick = {
+
+  }
   val configuration = LocalConfiguration.current
   val esHorizontal = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 

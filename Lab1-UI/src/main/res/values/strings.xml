@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Labs20262-Gr07</string>
     <string name="app_title">Información Personal</string>
+    <string name="male">Hombre</string>
+    <string name="female">Mujer</string>
+    <string name="gender">Sexo:</string>
 </resources>
