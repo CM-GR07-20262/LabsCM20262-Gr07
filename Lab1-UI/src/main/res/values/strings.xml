@@ -4,4 +4,7 @@
     <string name="male">Hombre</string>
     <string name="female">Mujer</string>
     <string name="gender">Sexo:</string>
+    <string name="brith_day">Fecha de nacimiento *</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
 </resources>
