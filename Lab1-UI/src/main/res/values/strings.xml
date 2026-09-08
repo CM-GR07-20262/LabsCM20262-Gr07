@@ -7,4 +7,9 @@
     <string name="brith_day">Fecha de nacimiento *</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
+    <string name="school_level">Grado de escolaridad</string>
+    <string name="primary">Primaria</string>
+    <string name="secondary">Secundaria</string>
+    <string name="university">Universitaria</string>
+    <string name="other">Otro</string>
 </resources>
