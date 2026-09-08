@@ -51,6 +51,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalConfiguration
+import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.NameAndSurnameInputHorizontal
+import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.NameAndSurnameInputVertical
+import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.NameInput
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -68,39 +71,6 @@ fun PersonalDataScreen(
   ) { paddingValues ->
     Content(paddingValues, {})
   }
-}
-
-@Preview
-@Composable
-private fun PreviewNameInput() {
-  NameInput("Nombres", "", Modifier.fillMaxSize(), {})
-}
-
-@Composable
-fun NameInput(
-  label: String,
-  value: String,
-  modifier: Modifier = Modifier,
-  onValueChange: (String) -> Unit,  // "recibe un String y no devuelve nada"
-) {
-  TextField(
-    label = { Text(label) },
-    value = value,
-    modifier = modifier.fillMaxWidth(),
-    onValueChange = onValueChange,
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Text,
-      capitalization = KeyboardCapitalization.Words, //Poner primera letra en mayuscula
-      autoCorrectEnabled = false //Quitar el autocorrector
-    ),
-    leadingIcon = {
-      Icon(
-        painter = painterResource(R.drawable.user),
-        contentDescription = "Icono de usuario",
-        tint = MaterialTheme.colorScheme.primary
-      )
-    }
-  )
 }
 
 @Composable
@@ -299,50 +269,3 @@ fun Content(
   }
 }
 
-@Composable
-private fun NameAndSurnameInputVertical(
-  nombres: String,
-  apellidos: String,
-  onNameChange: (String) -> Unit,
-  onLastNameChange: (String) -> Unit
-) {
-
-  NameInput(
-    label = "Nombres *",
-    value = nombres,
-    onValueChange = onNameChange,
-  )
-
-  NameInput(
-    label = "Apellidos *",
-    value = apellidos,
-    onValueChange = onLastNameChange
-  )
-}
-
-@Composable
-private fun NameAndSurnameInputHorizontal(
-  nombres: String,
-  apellidos: String,
-  onChangeName: (String) -> Unit,
-  onChangeLastName: (String) -> Unit
-) {
-  Row(
-    modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.spacedBy(16.dp)
-  ) {
-    NameInput(
-      label = "Nombres *",
-      value = nombres,
-      modifier = Modifier.weight(1f),
-      onValueChange = onChangeName
-    )
-
-    NameInput(
-      label = "Apellidos *",
-      value = apellidos,
-      modifier = Modifier.weight(1f),
-      onValueChange = onChangeLastName
-    )
-  }
-}
