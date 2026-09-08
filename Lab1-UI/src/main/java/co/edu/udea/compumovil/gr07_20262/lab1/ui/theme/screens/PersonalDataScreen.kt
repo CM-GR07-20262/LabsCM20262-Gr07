@@ -1,6 +1,7 @@
 package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.screens
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,11 +39,10 @@ import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.T
 fun PersonalDataScreen(
 
 ) {
-
   Scaffold(
     topBar = { TopBar() }
   ) { paddingValues ->
-    Content(paddingValues, {})
+    Content(paddingValues)
   }
 }
 
@@ -50,11 +50,8 @@ fun PersonalDataScreen(
 @Composable
 fun Content(
   paddingValues: PaddingValues,
-  onSiguienteClick: () -> Unit
 ) {
-  val onSiguienteClick = {
 
-  }
   val configuration = LocalConfiguration.current
   val esHorizontal = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -72,6 +69,13 @@ fun Content(
   // Estados para el DatePicker
   var mostrarDatePicker by rememberSaveable { mutableStateOf(false) }
   val datePickerState = rememberDatePickerState()
+
+
+  val onSiguienteClick = {
+    val informationText =
+      buildLogPersonalInformation(nombres, apellidos, sexo, fechaNacimiento, gradoEscolaridad)
+    Log.i("Información personal", informationText)
+  }
 
   Box(
     Modifier
@@ -114,7 +118,7 @@ fun Content(
       Spacer(modifier = Modifier.height(24.dp))
 
       Button(
-        onClick = onSiguienteClick,
+        onClick = { onSiguienteClick() },
         modifier = Modifier.fillMaxWidth(),
         enabled = nombres.isNotBlank() && apellidos.isNotBlank() && fechaNacimiento.isNotBlank()
       ) {
@@ -122,5 +126,27 @@ fun Content(
       }
     }
   }
+}
+
+private fun buildLogPersonalInformation(
+  nombres: String,
+  apellidos: String,
+  sexo: String,
+  fechaNacimiento: String,
+  gradoEscolaridad: String
+): String {
+  val stringBuilder = StringBuilder()
+  stringBuilder.append("Información Personal:\n")
+  stringBuilder.append("${nombres.trim()} ${apellidos.trim()}")
+
+  if (sexo.isNotBlank())
+    stringBuilder.append("\n$sexo")
+
+  stringBuilder.append("\nNació el $fechaNacimiento")
+
+  if (gradoEscolaridad.isNotBlank())
+    stringBuilder.append("\n$gradoEscolaridad")
+
+  return stringBuilder.toString()
 }
 
