@@ -1,5 +1,6 @@
 package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.screens
 
+import android.content.res.Configuration
 import android.graphics.Paint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,8 +35,11 @@ import androidx.compose.ui.unit.dp
 import co.edu.udea.compumovil.gr07_20262.lab1.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -43,6 +49,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -50,31 +58,35 @@ import java.util.TimeZone
 
 
 @Composable
-fun PersonalDataScreen() {
+fun PersonalDataScreen(
+  //onSiguienteClick: () -> Unit
+) {
 
   Scaffold(
     topBar = { TopBar() }
 
   ) { paddingValues ->
-    Content(paddingValues)
+    Content(paddingValues, {})
   }
 }
 
 @Preview
 @Composable
 private fun PreviewNameInput() {
-  NameInput("Nombres", "", {})
+  NameInput("Nombres", "", Modifier.fillMaxSize(),{})
 }
 
 @Composable
 fun NameInput(
   label: String,
   value: String,
-  onValueChange: (String) -> Unit  // "recibe un String y no devuelve nada"
+  modifier: Modifier = Modifier,
+  onValueChange: (String) -> Unit,  // "recibe un String y no devuelve nada"
 ) {
   TextField(
     label = { Text(label) },
     value = value,
+    modifier = modifier.fillMaxWidth(),
     onValueChange = onValueChange,
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Text,
@@ -189,31 +201,86 @@ fun TopBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(paddingValues: PaddingValues) {
-  var nombres by remember { mutableStateOf("") }
-  var apellidos by remember { mutableStateOf("") }
-  var fechaNacimiento by remember { mutableStateOf("") }
-  var sexo by remember { mutableStateOf("") }
-  var gradoEscolaridad by remember { mutableStateOf("") }
+fun Content(
+  paddingValues: PaddingValues,
+  onSiguienteClick: () -> Unit
+) {
+  // Orientación
+  val configuration = LocalConfiguration.current
+  val esHorizontal = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+  // Alineación
+  val alineacionHorizontal = if (esHorizontal) Alignment.CenterHorizontally else Alignment.Start
+  val anchoFraccion = if (esHorizontal) 0.7f else 1f // Reduce form 70%
+
+  // Variables contenedoras
+  var nombres by rememberSaveable { mutableStateOf("") }
+  var apellidos by rememberSaveable { mutableStateOf("") }
+  var fechaNacimiento by rememberSaveable { mutableStateOf("") }
+  var sexo by rememberSaveable { mutableStateOf("") }
+  var gradoEscolaridad by rememberSaveable { mutableStateOf("") }
 
   // Estados para el DatePicker
-  var mostrarDatePicker by remember { mutableStateOf(false) }
+  var mostrarDatePicker by rememberSaveable { mutableStateOf(false) }
   val datePickerState = rememberDatePickerState()
 
-  Box(Modifier.padding(paddingValues)) {
+  Box(
+    Modifier.padding(paddingValues)
+      .fillMaxSize(),
+    contentAlignment = if (esHorizontal) Alignment.Center else Alignment.TopStart
+  ) {
     Column(
-      Modifier.padding(16.dp),
-      horizontalAlignment = Alignment.Start,
+      Modifier
+        .padding(16.dp)
+        .fillMaxWidth(anchoFraccion)
+        .verticalScroll(rememberScrollState()),
+      horizontalAlignment = alineacionHorizontal,
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      NameInput("Nombres *", nombres) { nombres = it }
-      NameInput("Apellidos *", apellidos) { apellidos = it }
+      if (esHorizontal) {
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+          NameInput(
+            label = "Nombres *",
+            value = nombres,
+            modifier = Modifier.weight(1f)
+          ) { nombres = it }
+
+          NameInput(
+            label = "Apellidos *",
+            value = apellidos,
+            modifier = Modifier.weight(1f)
+          ) { apellidos = it }
+        }
+      } else {
+        NameInput(
+          label = "Nombres *",
+          value = nombres
+        ) { nombres = it }
+
+        NameInput(
+          label = "Apellidos *",
+          value = apellidos
+        ) { apellidos = it }
+      }
+      SexoSelector(sexo) { sexo = it }
       FechaNacimientoSelector(
         fechaNacimiento = fechaNacimiento,
         onFechaClick = { mostrarDatePicker = true }
       )
-      SexoSelector(sexo) { sexo = it }
       GradoEscolaridadSelector(gradoEscolaridad) { gradoEscolaridad = it }
+
+      Spacer(modifier = Modifier.height(24.dp))
+
+      Button(
+        onClick = onSiguienteClick,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = nombres.isNotBlank() && apellidos.isNotBlank() && fechaNacimiento.isNotBlank()
+      ){
+        Text("Siguiente")
+      }
     }
 
     // Lógica para dialogo flotante (Se visualiza solo si mostrarDatePicker es true)
