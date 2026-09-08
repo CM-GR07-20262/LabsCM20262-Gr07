@@ -73,7 +73,7 @@ fun PersonalDataScreen(
 @Preview
 @Composable
 private fun PreviewNameInput() {
-  NameInput("Nombres", "", Modifier.fillMaxSize(),{})
+  NameInput("Nombres", "", Modifier.fillMaxSize(), {})
 }
 
 @Composable
@@ -108,7 +108,7 @@ fun FechaNacimientoSelector(
   fechaNacimiento: String,
   onFechaClick: () -> Unit,
   modifier: Modifier = Modifier
-){
+) {
   OutlinedTextField(
     value = fechaNacimiento,
     onValueChange = {},
@@ -225,7 +225,8 @@ fun Content(
   val datePickerState = rememberDatePickerState()
 
   Box(
-    Modifier.padding(paddingValues)
+    Modifier
+      .padding(paddingValues)
       .fillMaxSize(),
     contentAlignment = if (esHorizontal) Alignment.Center else Alignment.TopStart
   ) {
@@ -238,32 +239,17 @@ fun Content(
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       if (esHorizontal) {
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-          NameInput(
-            label = "Nombres *",
-            value = nombres,
-            modifier = Modifier.weight(1f)
-          ) { nombres = it }
-
-          NameInput(
-            label = "Apellidos *",
-            value = apellidos,
-            modifier = Modifier.weight(1f)
-          ) { apellidos = it }
-        }
+        NameAndSurnameInputHorizontal(
+          nombres, apellidos,
+          onChangeName = { nombres = it },
+          onChangeLastName = { apellidos = it }
+        )
       } else {
-        NameInput(
-          label = "Nombres *",
-          value = nombres
-        ) { nombres = it }
-
-        NameInput(
-          label = "Apellidos *",
-          value = apellidos
-        ) { apellidos = it }
+        NameAndSurnameInputVertical(
+          nombres, apellidos,
+          onNameChange = { nombres = it },
+          onLastNameChange = { apellidos = it },
+        )
       }
       SexoSelector(sexo) { sexo = it }
       FechaNacimientoSelector(
@@ -278,19 +264,19 @@ fun Content(
         onClick = onSiguienteClick,
         modifier = Modifier.fillMaxWidth(),
         enabled = nombres.isNotBlank() && apellidos.isNotBlank() && fechaNacimiento.isNotBlank()
-      ){
+      ) {
         Text("Siguiente")
       }
     }
 
-    // Lógica para dialogo flotante (Se visualiza solo si mostrarDatePicker es true)
+    // Lógica para diálogo flotante (Se visualiza solo si mostrarDatePicker es true)
     if (mostrarDatePicker) {
       DatePickerDialog(
         onDismissRequest = { mostrarDatePicker = false },
         confirmButton = {
           TextButton(onClick = {
             val dateMillis = datePickerState.selectedDateMillis
-            if (dateMillis != null){
+            if (dateMillis != null) {
               // Formatear fecha
               val formatter = SimpleDateFormat("dd/MM/yyy", Locale.getDefault())
               formatter.timeZone = TimeZone.getTimeZone("UTC")
@@ -310,5 +296,53 @@ fun Content(
         DatePicker(state = datePickerState)
       }
     }
+  }
+}
+
+@Composable
+private fun NameAndSurnameInputVertical(
+  nombres: String,
+  apellidos: String,
+  onNameChange: (String) -> Unit,
+  onLastNameChange: (String) -> Unit
+) {
+
+  NameInput(
+    label = "Nombres *",
+    value = nombres,
+    onValueChange = onNameChange,
+  )
+
+  NameInput(
+    label = "Apellidos *",
+    value = apellidos,
+    onValueChange = onLastNameChange
+  )
+}
+
+@Composable
+private fun NameAndSurnameInputHorizontal(
+  nombres: String,
+  apellidos: String,
+  onChangeName: (String) -> Unit,
+  onChangeLastName: (String) -> Unit
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(16.dp)
+  ) {
+    NameInput(
+      label = "Nombres *",
+      value = nombres,
+      modifier = Modifier.weight(1f),
+      onValueChange = onChangeName
+    )
+
+    NameInput(
+      label = "Apellidos *",
+      value = apellidos,
+      modifier = Modifier.weight(1f),
+      onValueChange = onChangeLastName
+    )
   }
 }
