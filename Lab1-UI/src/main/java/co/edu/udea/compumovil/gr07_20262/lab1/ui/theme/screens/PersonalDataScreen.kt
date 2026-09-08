@@ -26,7 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import co.edu.udea.compumovil.gr07_20262.lab1.R
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.FechaNacimientoSelector
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.GradoEscolaridadSelector
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.NameAndSurnameInputHorizontal
@@ -122,7 +124,7 @@ fun Content(
         modifier = Modifier.fillMaxWidth(),
         enabled = nombres.isNotBlank() && apellidos.isNotBlank() && fechaNacimiento.isNotBlank()
       ) {
-        Text("Siguiente")
+        Text(stringResource(R.string.next))
       }
     }
   }
