@@ -19,4 +19,5 @@
     <string name="city">Ciudad</string>
     <string name="address">Dirección</string>
     <string name="invalid_mail_message">Verifica que sea una dirección de correo electrónico valida</string>
+    <string name="invalid_phone_numer_message">Asegurate de poner un número de teléfono valido</string>
 </resources>

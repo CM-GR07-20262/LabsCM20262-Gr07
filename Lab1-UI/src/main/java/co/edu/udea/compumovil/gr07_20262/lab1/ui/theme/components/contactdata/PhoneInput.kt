@@ -13,13 +13,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
 
 @Composable
-fun PhoneInput(phoneValue: String, validPhone: () -> Boolean, onPhoneChange: (String) -> Unit) {
+fun PhoneInput(phoneValue: String, invalidPhoneNumber: () -> Boolean, onPhoneChange: (String) -> Unit) {
   TextField(
     value = phoneValue,
     onValueChange = onPhoneChange,
     label = { Text(stringResource(R.string.phone)) },
     maxLines = 1,
-    isError = validPhone(),
+    isError = invalidPhoneNumber(),
     singleLine = true,
     leadingIcon = {
       Icon(
@@ -30,7 +30,12 @@ fun PhoneInput(phoneValue: String, validPhone: () -> Boolean, onPhoneChange: (St
     },
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Phone
-    )
+    ),
+    supportingText = {
+      if (invalidPhoneNumber()) {
+        Text(stringResource(R.string.invalid_phone_numer_message))
+      }
+    }
   )
 }
 
@@ -39,4 +44,10 @@ fun PhoneInput(phoneValue: String, validPhone: () -> Boolean, onPhoneChange: (St
 @Composable
 private fun PreviewPhoneInput() {
   PhoneInput("", {false}) { }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewInvalidPhoneInput() {
+  PhoneInput("", {true}) { }
 }

@@ -104,7 +104,7 @@ fun Content(
       phone.isNotEmpty() && phone.length != 10
     }
 
-    val validEmail: () -> Boolean = {
+    val invalidEmail: () -> Boolean = {
       val emailRegex = Regex(
         """^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"""
       )
@@ -120,14 +120,14 @@ fun Content(
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       PhoneInput(phone, validPhone) { phone = it }
-      MailInput(mail, validEmail) { mail = it }
+      MailInput(mail, invalidEmail) { mail = it }
       CountrySelector(countries, onSelectCountry)
       CitySelector(cities) { city = it }
       AddressInput(address, onAddressChange = { address = it }, validAddress = validAddress)
 
       Button(
         { onNext() },
-        enabled = !validPhone() && !validEmail()
+        enabled = !validPhone() && !invalidEmail()
             && selectedCountry.isNotBlank()
             && !validAddress(address)
       ) {
