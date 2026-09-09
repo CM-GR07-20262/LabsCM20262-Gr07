@@ -117,7 +117,7 @@ fun Content(
         onSetFechaDeNacimiento = { fechaNacimiento = it },
       )
       GradoEscolaridadSelector(gradoEscolaridad) { gradoEscolaridad = it }
-      Text("Los campos marcados con * son obligatorios", style = MaterialTheme.typography.labelSmall)
+      Text(stringResource(R.string.los_campos_marcados_con_son_obligatorios), style = MaterialTheme.typography.labelSmall)
       Spacer(modifier = Modifier.height(24.dp))
 
 

@@ -21,4 +21,5 @@
     <string name="invalid_mail_message">Verifica que sea una dirección de correo electrónico valida</string>
     <string name="invalid_phone_numer_message">Asegurate de poner un número de teléfono valido</string>
     <string name="invalid_address_message">Asegurate de escribir una dirección valida</string>
+    <string name="los_campos_marcados_con_son_obligatorios">Los campos marcados con * son obligatorios</string>
 </resources>
