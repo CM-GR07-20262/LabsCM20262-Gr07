@@ -18,4 +18,5 @@
     <string name="country">Pais*</string>
     <string name="city">Ciudad</string>
     <string name="address">Dirección</string>
+    <string name="invalid_mail_message">Verifica que sea una dirección de correo electrónico valida</string>
 </resources>

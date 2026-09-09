@@ -1,6 +1,5 @@
 package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata
 
-import android.inputmethodservice.Keyboard
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -14,13 +13,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
 
 @Composable
-fun MailInput(mailValue: String, validMail: () -> Boolean, onMailChange: (String) -> Unit) {
+fun MailInput(mailValue: String, invalidEmail: () -> Boolean, onMailChange: (String) -> Unit) {
   TextField(
     value = mailValue,
     onValueChange = onMailChange,
     label = { Text(stringResource(R.string.mail)) },
     maxLines = 1,
-    isError = validMail(),
+    isError = invalidEmail(),
     singleLine = true,
     leadingIcon = {
       Icon(
@@ -31,12 +30,26 @@ fun MailInput(mailValue: String, validMail: () -> Boolean, onMailChange: (String
     },
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Email
-    )
+    ),
+    supportingText = {
+      if (invalidEmail()) {
+        Text(
+          stringResource(R.string.invalid_mail_message),
+          color = MaterialTheme.colorScheme.error
+        )
+      }
+    }
   )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PreviewMailInput() {
   MailInput("", { true }) { }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewValidMailInpu() {
+  MailInput("", { false }) { }
 }

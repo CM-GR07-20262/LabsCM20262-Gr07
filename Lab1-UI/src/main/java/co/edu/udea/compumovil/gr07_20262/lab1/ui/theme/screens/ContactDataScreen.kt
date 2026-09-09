@@ -83,8 +83,6 @@ fun Content(
   selectedCountry: String
 ) {
   Column(Modifier.padding(paddingValues)) {
-
-
     var phone by remember { mutableStateOf("") }
     var mail by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
