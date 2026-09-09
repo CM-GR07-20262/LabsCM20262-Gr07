@@ -1,7 +1,9 @@
 package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +40,8 @@ fun GradoEscolaridadSelector(seleccionado: String, onSeleccionChange: (String) -
       onValueChange = {},
       readOnly = true,
       label = { Text(stringResource(R.string.school_level)) },
-      modifier = Modifier.menuAnchor(),
+      modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+        .fillMaxWidth(),
       leadingIcon = {
         Icon(
           painterResource(R.drawable.school),
