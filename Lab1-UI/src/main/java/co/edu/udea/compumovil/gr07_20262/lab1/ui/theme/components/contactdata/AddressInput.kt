@@ -37,11 +37,6 @@ fun AddressInput(addressValue: String, onAddressChange: (String) -> Unit, validA
         tint = MaterialTheme.colorScheme.primary
       )
     },
-    colors = TextFieldDefaults.colors(
-      errorTextColor = MaterialTheme.colorScheme.error,
-      errorLabelColor = MaterialTheme.colorScheme.error,
-      errorContainerColor = MaterialTheme.colorScheme.errorContainer
-    ),
     maxLines = 1,
     singleLine = true,
     label = { Text(stringResource(R.string.address)) }

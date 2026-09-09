@@ -102,21 +102,35 @@ fun Content(
       address.isNotEmpty() && !address.matches(addressRegex)
     }
 
+    val validPhone: () -> Boolean = {
+      phone.isNotEmpty() && phone.length != 10
+    }
+
+    val validEmail: () -> Boolean = {
+      val emailRegex = Regex(
+        """^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"""
+      )
+
+       mail.isNotEmpty() && !mail.matches(emailRegex)
+
+    }
+
     Column(
       Modifier
         .fillMaxWidth()
         .padding(16.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      PhoneInput(phone) { phone = it }
-      MailInput(mail) { mail = it }
+      PhoneInput(phone, validPhone) { phone = it }
+      MailInput(mail, validEmail) { mail = it }
       CountrySelector(countries, onSelectCountry)
       CitySelector(cities) { city = it }
       AddressInput(address, onAddressChange = { address = it }, validAddress = validAddress)
 
       Button(
         { onNext() },
-        enabled = phone.isNotBlank() && mail.isNotBlank() && selectedCountry.isNotBlank()
+        enabled = !validPhone() && !validEmail()
+            && selectedCountry.isNotBlank()
             && !validAddress(address)
       ) {
         Text(stringResource(R.string.next))

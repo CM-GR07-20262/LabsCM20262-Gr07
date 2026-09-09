@@ -14,17 +14,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
 
 @Composable
-fun MailInput(mailValue: String, onMailChange: (String) -> Unit) {
+fun MailInput(mailValue: String, validMail: () -> Boolean, onMailChange: (String) -> Unit) {
   TextField(
     value = mailValue,
     onValueChange = onMailChange,
     label = { Text(stringResource(R.string.mail)) },
     maxLines = 1,
+    isError = validMail(),
     singleLine = true,
     leadingIcon = {
-      Icon(painterResource(R.drawable.mail),
+      Icon(
+        painterResource(R.drawable.mail),
         "Mail icon",
-        tint = MaterialTheme.colorScheme.primary)
+        tint = MaterialTheme.colorScheme.primary
+      )
     },
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Email
@@ -35,5 +38,5 @@ fun MailInput(mailValue: String, onMailChange: (String) -> Unit) {
 @Preview
 @Composable
 private fun PreviewMailInput() {
-  MailInput("") { }
+  MailInput("", { true }) { }
 }
