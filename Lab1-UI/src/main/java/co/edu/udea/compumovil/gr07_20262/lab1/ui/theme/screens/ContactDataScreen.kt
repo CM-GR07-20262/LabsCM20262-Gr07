@@ -101,7 +101,10 @@ fun Content(
     }
 
     val validPhone: () -> Boolean = {
-      phone.isNotEmpty() && phone.length != 10
+      val regex = Regex(
+        "^(?:\\+?57\\s?)?3\\d{2}[\\s-]?\\d{3}[\\s-]?\\d{4}\$"
+      )
+      phone.isNotEmpty() && !phone.matches(regex)
     }
 
     val invalidEmail: () -> Boolean = {
@@ -109,7 +112,7 @@ fun Content(
         """^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"""
       )
 
-       mail.isNotEmpty() && !mail.matches(emailRegex)
+      mail.isNotEmpty() && !mail.matches(emailRegex)
 
     }
 
