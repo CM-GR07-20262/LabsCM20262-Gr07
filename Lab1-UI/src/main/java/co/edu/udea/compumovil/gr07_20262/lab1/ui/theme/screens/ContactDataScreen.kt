@@ -93,7 +93,7 @@ fun Content(
       Log.i("Información de contacto", logText)
     }
 
-    val validAddress: (String) -> Boolean = {
+    val validAddress: () -> Boolean = {
       val addressRegex = Regex(
         """^(Calle|Cra?\.?|Carrera|Cl\.?|Transversal|Tv\.?|Diagonal|Dg\.?)\s+\d+[A-Za-z]?\s*#\s*\d+[A-Za-z]?\s*-\s*\d+$"""
       )
@@ -111,9 +111,7 @@ fun Content(
       val emailRegex = Regex(
         """^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"""
       )
-
       mail.isNotEmpty() && !mail.matches(emailRegex)
-
     }
 
     Column(
@@ -126,13 +124,13 @@ fun Content(
       MailInput(mail, invalidEmail) { mail = it }
       CountrySelector(countries, onSelectCountry)
       CitySelector(cities) { city = it }
-      AddressInput(address, onAddressChange = { address = it }, validAddress = validAddress)
+      AddressInput(address, invalidAddress = validAddress) { address = it }
 
       Button(
         { onNext() },
         enabled = !validPhone() && !invalidEmail()
             && selectedCountry.isNotBlank()
-            && !validAddress(address)
+            && !validAddress()
       ) {
         Text(stringResource(R.string.next))
       }
