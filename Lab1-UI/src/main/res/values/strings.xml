@@ -13,9 +13,9 @@
     <string name="university">Universitaria</string>
     <string name="other">Otro</string>
     <string name="next">Siguiente</string>
-    <string name="phone">Teléfono</string>
-    <string name="mail">Correo</string>
-    <string name="country">Pais</string>
+    <string name="phone">Teléfono*</string>
+    <string name="mail">Correo*</string>
+    <string name="country">Pais*</string>
     <string name="city">Ciudad</string>
     <string name="address">Dirección</string>
 </resources>

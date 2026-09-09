@@ -18,6 +18,8 @@ fun PhoneInput(phoneValue: String, onPhoneChange: (String) -> Unit) {
     value = phoneValue,
     onValueChange = onPhoneChange,
     label = { Text(stringResource(R.string.phone)) },
+    maxLines = 1,
+    singleLine = true,
     leadingIcon = {
       Icon(
         painterResource(R.drawable.phone),
