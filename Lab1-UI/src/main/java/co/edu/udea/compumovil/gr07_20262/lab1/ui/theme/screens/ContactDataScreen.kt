@@ -1,11 +1,16 @@
 package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.screens
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.edu.udea.compumovil.gr07_20262.lab1.R
@@ -60,8 +66,7 @@ fun ContactDataScreen() {
   }
 
   Scaffold(
-    topBar = { TopBar() }
-  ) {
+    topBar = { TopBar() }) {
     Content(
       paddingValues = it,
       cities = cities,
@@ -82,7 +87,13 @@ fun Content(
   cities: List<String>,
   selectedCountry: String
 ) {
-  Column(Modifier.padding(paddingValues)) {
+  val scrollState = rememberScrollState()
+
+  Column(
+    Modifier
+      .padding(paddingValues)
+      .verticalScroll(scrollState)
+  ) {
     var phone by remember { mutableStateOf("") }
     var mail by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
@@ -100,7 +111,7 @@ fun Content(
       address.isNotEmpty() && !address.matches(addressRegex)
     }
 
-    val validPhone: () -> Boolean = {
+    val invalidPhoneNumber: () -> Boolean = {
       val regex = Regex(
         "^(?:\\+?57\\s?)?3\\d{2}[\\s-]?\\d{3}[\\s-]?\\d{4}\$"
       )
@@ -114,52 +125,99 @@ fun Content(
       mail.isNotEmpty() && !mail.matches(emailRegex)
     }
 
-    Column(
-      Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-      PhoneInput(phone, validPhone) { phone = it }
-      MailInput(mail, invalidEmail) { mail = it }
-      CountrySelector(countries, onSelectCountry)
-      CitySelector(cities) { city = it }
-      AddressInput(address, invalidAddress = validAddress) { address = it }
+    val configuration = LocalConfiguration.current
+    val isVertical = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
+    val onPhoneChange: (String) -> Unit = { phone = it }
+    val onMailChange: (String) -> Unit = { mail = it }
+    val onCityChange: (String) -> Unit = { city = it }
+    val onAddressChange: (String) -> Unit = { address = it }
+
+    FormInputs(
+      phone,
+      invalidPhoneNumber,
+      onPhoneChange,
+      mail,
+      invalidEmail,
+      onMailChange,
+      countries,
+      onSelectCountry,
+      cities,
+      onCityChange,
+      address,
+      validAddress,
+      onAddressChange,
+      isVertical,
+    )
+
+    Box(Modifier
+      .padding(16.dp)
+      .fillMaxWidth()) {
       Button(
         { onNext() },
-        enabled = !validPhone() && !invalidEmail()
-            && selectedCountry.isNotBlank()
-            && !validAddress()
+        enabled = !invalidPhoneNumber() && phone.isNotEmpty() && !invalidEmail()
+            && mail.isNotEmpty() && selectedCountry.isNotBlank() && !validAddress()
       ) {
         Text(stringResource(R.string.next))
       }
-
     }
+  }
+}
 
+@Composable
+private fun FormInputs(
+  phone: String,
+  invalidPhoneNumber: () -> Boolean,
+  onPhoneChange: (String) -> Unit,
+  mail: String,
+  invalidEmail: () -> Boolean,
+  onMailChange: (String) -> Unit,
+  countries: List<String>,
+  onSelectCountry: (String) -> Unit,
+  cities: List<String>,
+  onCityChange: (String) -> Unit,
+  address: String,
+  validAddress: () -> Boolean,
+  onAddressChange: (String) -> Unit,
+  isVertical: Boolean
+) {
+  FlowRow(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(16.dp),
+    horizontalArrangement = Arrangement.spacedBy(16.dp),
+    verticalArrangement = Arrangement.spacedBy(16.dp),
+    maxItemsInEachRow = if (isVertical) 1 else 2
+  ) {
+
+    Box(Modifier.weight(1f)) { PhoneInput(phone, invalidPhoneNumber, onPhoneChange) }
+    Box(Modifier.weight(1f)) { MailInput(mail, invalidEmail, onMailChange) }
+    Box(Modifier.weight(1f)) { CountrySelector(countries, onSelectCountry) }
+    Box(Modifier.weight(1f)) { CitySelector(cities, onCityChange) }
+    Box(Modifier.weight(1f)) {
+      AddressInput(
+        address,
+        invalidAddress = validAddress,
+        onAddressChange = onAddressChange
+      )
+    }
   }
 }
 
 private fun buildLogString(
-  phone: String,
-  address: String,
-  mail: String,
-  selectedCountry: String,
-  city: String
+  phone: String, address: String, mail: String, selectedCountry: String, city: String
 ): String {
   val stringBuilder = StringBuilder()
 
   stringBuilder.append("Información de contacto\n")
   stringBuilder.append("Teléfono: $phone\n")
 
-  if (address.isNotEmpty())
-    stringBuilder.append("Dirección: $address\n")
+  if (address.isNotEmpty()) stringBuilder.append("Dirección: $address\n")
 
   stringBuilder.append("Email: $mail\n")
   stringBuilder.append("Pais: $selectedCountry\n")
 
-  if (city.isNotEmpty())
-    stringBuilder.append("Ciudad: $city\n")
+  if (city.isNotEmpty()) stringBuilder.append("Ciudad: $city\n")
 
   val logText = stringBuilder.toString()
   return logText
