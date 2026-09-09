@@ -40,12 +40,12 @@ import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.personaldata.T
 
 @Composable
 fun PersonalDataScreen(
-
+  navigateNext: () -> Unit
 ) {
   Scaffold(
     topBar = { TopBar() }
   ) { paddingValues ->
-    Content(paddingValues)
+    Content(paddingValues, navigateNext)
   }
 }
 
@@ -53,6 +53,7 @@ fun PersonalDataScreen(
 @Composable
 fun Content(
   paddingValues: PaddingValues,
+  navigateNext: () -> Unit
 ) {
 
   val configuration = LocalConfiguration.current
@@ -117,12 +118,18 @@ fun Content(
         onSetFechaDeNacimiento = { fechaNacimiento = it },
       )
       GradoEscolaridadSelector(gradoEscolaridad) { gradoEscolaridad = it }
-      Text(stringResource(R.string.los_campos_marcados_con_son_obligatorios), style = MaterialTheme.typography.labelSmall)
+      Text(
+        stringResource(R.string.los_campos_marcados_con_son_obligatorios),
+        style = MaterialTheme.typography.labelSmall
+      )
       Spacer(modifier = Modifier.height(24.dp))
 
 
       Button(
-        onClick = { onSiguienteClick() },
+        onClick = {
+          onSiguienteClick()
+          navigateNext()
+        },
         modifier = Modifier.fillMaxWidth(),
         enabled = nombres.isNotBlank() && apellidos.isNotBlank() && fechaNacimiento.isNotBlank()
       ) {

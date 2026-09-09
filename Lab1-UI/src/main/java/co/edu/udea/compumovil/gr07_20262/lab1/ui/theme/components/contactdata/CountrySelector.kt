@@ -3,6 +3,7 @@ package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -50,6 +51,7 @@ fun CountrySelector(
       },
       modifier = Modifier
         .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true)
+        .fillMaxWidth()
     )
     val filteredCountries = countries.filter {
       it.lowercase(getDefault())
