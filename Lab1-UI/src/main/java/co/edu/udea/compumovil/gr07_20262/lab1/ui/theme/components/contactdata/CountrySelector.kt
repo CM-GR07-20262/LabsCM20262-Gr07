@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
 import java.util.Locale.getDefault
@@ -39,7 +40,7 @@ fun CountrySelector(
         filterValue = it
         expanded = true
       },
-      label = { Text("Pais") },
+      label = { Text(stringResource(R.string.country)) },
       singleLine = true,
       maxLines = 1,
       leadingIcon = {

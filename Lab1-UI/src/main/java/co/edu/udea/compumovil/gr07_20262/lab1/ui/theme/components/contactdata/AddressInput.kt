@@ -22,15 +22,14 @@ import co.edu.udea.compumovil.gr07_20262.lab1.R
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.Labs20262Gr07Theme
 
 @Composable
-fun AddressInput(addressValue: String, onAddressChange: (String) -> Unit) {
+fun AddressInput(addressValue: String, onAddressChange: (String) -> Unit, validAddress: (String) -> Boolean) {
 
-  val addressRegex = Regex(
-    """^(Calle|Cra?\.?|Carrera|Cl\.?|Transversal|Tv\.?|Diagonal|Dg\.?)\s+\d+[A-Za-z]?\s*#\s*\d+[A-Za-z]?\s*-\s*\d+$"""
-  )
+
+
   TextField(
     value = addressValue,
     onValueChange = onAddressChange,
-    isError = addressValue.matches(addressRegex),
+    isError = validAddress(addressValue),
     leadingIcon = {
       Icon(
         painterResource(R.drawable.address),
@@ -50,17 +49,3 @@ fun AddressInput(addressValue: String, onAddressChange: (String) -> Unit) {
 }
 
 
-@Preview
-@Composable
-private fun PreviewAddressInput() {
-  var address by remember { mutableStateOf("") }
-  Labs20262Gr07Theme {
-    Column(
-      Modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center
-    ) {
-      AddressInput(address) { address = it }
-    }
-  }
-}
