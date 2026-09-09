@@ -1,4 +1,4 @@
-package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme
+package co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
