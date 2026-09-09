@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -116,8 +117,9 @@ fun Content(
         onSetFechaDeNacimiento = { fechaNacimiento = it },
       )
       GradoEscolaridadSelector(gradoEscolaridad) { gradoEscolaridad = it }
-
+      Text("Los campos marcados con * son obligatorios", style = MaterialTheme.typography.labelSmall)
       Spacer(modifier = Modifier.height(24.dp))
+
 
       Button(
         onClick = { onSiguienteClick() },
