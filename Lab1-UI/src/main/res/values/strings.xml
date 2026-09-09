@@ -16,4 +16,5 @@
     <string name="phone">Teléfono</string>
     <string name="mail">Correo</string>
     <string name="country">Pais</string>
+    <string name="city">Ciudad</string>
 </resources>
