@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
+import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 fun PhoneInput(
@@ -35,7 +36,8 @@ fun PhoneInput(
       )
     },
     keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Phone
+      keyboardType = KeyboardType.Phone,
+      imeAction = ImeAction.Next
     ),
     modifier = Modifier.fillMaxWidth(),
     supportingText = {

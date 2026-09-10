@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -41,7 +42,7 @@ fun ContactDataScreen() {
   val fetchCities = remember { provider.fetchCitiesProvider() }
   val fetchCuntries = remember { provider.fetchCuntriesProvider() }
 
-  var selectedCountry by remember { mutableStateOf("") }
+  var selectedCountry by rememberSaveable { mutableStateOf("") }
   val onSelectCountry: (String) -> Unit = { country -> selectedCountry = country }
 
   var countries by remember { mutableStateOf<List<String>>(emptyList()) }
@@ -95,17 +96,17 @@ fun Content(
       .padding(paddingValues)
       .verticalScroll(scrollState)
   ) {
-    var phone by remember { mutableStateOf("") }
-    var mail by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
+    var mail by rememberSaveable { mutableStateOf("") }
+    var city by rememberSaveable { mutableStateOf("") }
+    var address by rememberSaveable { mutableStateOf("") }
 
     val onNext = {
       val logText = buildLogString(phone, address, mail, selectedCountry, city)
       Log.i("Información de contacto", logText)
     }
 
-    val validAddress: () -> Boolean = {
+    val invalidAddress: () -> Boolean = {
       val addressRegex = Regex(
         """^(Calle|Cra?\.?|Carrera|Cl\.?|Transversal|Tv\.?|Diagonal|Dg\.?)\s+\d+[A-Za-z]?\s*#\s*\d+[A-Za-z]?\s*-\s*\d+$"""
       )
@@ -146,7 +147,7 @@ fun Content(
       cities,
       onCityChange,
       address,
-      validAddress,
+      invalidAddress,
       onAddressChange,
       isVertical,
     )
@@ -165,7 +166,7 @@ fun Content(
       Button(
         { onNext() },
         enabled = !invalidPhoneNumber() && phone.isNotEmpty() && !invalidEmail()
-            && mail.isNotEmpty() && selectedCountry.isNotBlank() && !validAddress()
+            && mail.isNotEmpty() && selectedCountry.isNotBlank() && !invalidAddress()
       ) {
         Text(stringResource(R.string.next))
       }
@@ -231,4 +232,3 @@ private fun buildLogString(
   val logText = stringBuilder.toString()
   return logText
 }
-

@@ -59,7 +59,7 @@ fun CountrySelector(
     }
 
     ExposedDropdownMenu(
-      expanded = expanded, onDismissRequest = { }) {
+      expanded = expanded, onDismissRequest = { expanded = false }) {
 
       filteredCountries.forEach {
         DropdownMenuItem(text = { Text(it) }, onClick = {

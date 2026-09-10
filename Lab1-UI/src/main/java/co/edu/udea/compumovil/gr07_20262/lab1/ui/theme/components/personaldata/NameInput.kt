@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
+import androidx.compose.ui.text.input.ImeAction
 
 
 @Preview
@@ -37,7 +38,8 @@ fun NameInput(
     keyboardOptions = KeyboardOptions(
       keyboardType = KeyboardType.Text,
       capitalization = KeyboardCapitalization.Words, //Poner primera letra en mayuscula
-      autoCorrectEnabled = false //Quitar el autocorrector
+      autoCorrectEnabled = false, //Quitar el autocorrector
+      imeAction = ImeAction.Next
     ),
     leadingIcon = {
       Icon(

@@ -11,6 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 fun AddressInput(
@@ -23,6 +26,11 @@ fun AddressInput(
     onValueChange = onAddressChange,
     isError = invalidAddress(),
     modifier = Modifier.fillMaxWidth(),
+    keyboardOptions = KeyboardOptions(
+      autoCorrectEnabled = false,
+      keyboardType = KeyboardType.Text,
+      imeAction = ImeAction.Next
+    ),
     leadingIcon = {
       Icon(
         painterResource(R.drawable.address),

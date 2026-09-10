@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import co.edu.udea.compumovil.gr07_20262.lab1.R
+import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 fun MailInput(mailValue: String, invalidEmail: () -> Boolean, onMailChange: (String) -> Unit) {
@@ -32,7 +33,8 @@ fun MailInput(mailValue: String, invalidEmail: () -> Boolean, onMailChange: (Str
       )
     },
     keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Email
+      keyboardType = KeyboardType.Email,
+      imeAction = ImeAction.Next
     ),
     supportingText = {
       if (invalidEmail()) {
