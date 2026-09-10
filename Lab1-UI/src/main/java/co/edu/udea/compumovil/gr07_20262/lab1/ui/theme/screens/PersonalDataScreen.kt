@@ -147,7 +147,7 @@ private fun buildLogPersonalInformation(
   gradoEscolaridad: String
 ): String {
   val stringBuilder = StringBuilder()
-  stringBuilder.append("Información Personal:\n")
+  stringBuilder.append("Información personal:\n")
   stringBuilder.append("${nombres.trim()} ${apellidos.trim()}")
 
   if (sexo.isNotBlank())

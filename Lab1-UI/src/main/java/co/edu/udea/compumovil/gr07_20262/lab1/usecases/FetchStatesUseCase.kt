@@ -6,21 +6,19 @@ import co.edu.udea.compumovil.gr07_20262.lab1.repository.dto.CountryRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class FetchCitiesUseCase(private val repo: CountriesNowApi) {
+class FetchStatesUseCase(private val repository: CountriesNowApi) {
 
   suspend fun execute(country: String): List<String> = withContext(Dispatchers.IO) {
     try {
       val request = CountryRequest(country)
-      val response = repo.getCities(request)
-
+      val response = repository.getStates(request)
       if (response.error) {
-        Log.e("FetchCitiesUseCase", "error cargando las ciudades")
+        Log.e("FetchStatesUseCase", "error cargando los departamentos")
         return@withContext emptyList()
       }
-
-      return@withContext response.data
+      return@withContext response.data.states.map { it.name }
     } catch (e: Exception) {
-      Log.e("FetchCitiesUseCase", "Excepción al cargar ciudades: ${e.message}")
+      Log.e("FetchStatesUseCase", "Excepción al cargar departamentos: ${e.message}")
       return@withContext emptyList()
     }
   }

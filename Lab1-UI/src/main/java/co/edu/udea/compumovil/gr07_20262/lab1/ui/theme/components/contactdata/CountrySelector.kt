@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,10 +29,16 @@ import java.util.Locale.getDefault
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountrySelector(
-  countries: List<String>, onSelectCountry: (String) -> Unit
+  country: String,
+  countries: List<String>, 
+  onSelectCountry: (String) -> Unit
 ) {
   var expanded by remember { mutableStateOf(false) }
-  var filterValue by remember { mutableStateOf("") }
+  var filterValue by remember { mutableStateOf(country) }
+
+  LaunchedEffect(country) {
+    filterValue = country
+  }
 
   ExposedDropdownMenuBox(
     expanded = expanded, onExpandedChange = { expanded = !expanded }) {
@@ -39,6 +46,7 @@ fun CountrySelector(
       value = filterValue,
       onValueChange = {
         filterValue = it
+        onSelectCountry(it)
         expanded = true
       },
       label = { Text(stringResource(R.string.country)) },
@@ -80,43 +88,12 @@ private fun PreviewCountrySelector() {
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    var country by remember { mutableStateOf("") }
-    val onSelectCountry: (String) -> Unit = { country = it }
-    val countries = listOf(
-      "Colombia",
-      "Argentina",
-      "Brasil",
-      "Chile",
-      "Perú",
-      "México",
-      "Ecuador",
-      "Bolivia",
-      "Paraguay",
-      "Uruguay",
-      "Venezuela",
-      "Panamá",
-      "Costa Rica",
-      "Nicaragua",
-      "Honduras",
-      "Guatemala",
-      "El Salvador",
-      "Cuba",
-      "República Dominicana",
-      "España",
-      "Estados Unidos",
-      "Canadá",
-      "Francia",
-      "Italia",
-      "Alemania",
-      "Portugal",
-      "Reino Unido",
-      "Japón",
-      "China",
-      "Corea del Sur",
-      "Australia"
-    )
+    var country by remember { mutableStateOf("Colombia") }
+    val countries = listOf("Colombia", "Argentina", "Brasil")
     CountrySelector(
-      countries = countries, onSelectCountry = onSelectCountry
+      country = country,
+      countries = countries, 
+      onSelectCountry = { country = it }
     )
   }
 }

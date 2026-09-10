@@ -30,7 +30,9 @@ import co.edu.udea.compumovil.gr07_20262.lab1.R
 import co.edu.udea.compumovil.gr07_20262.lab1.di.UseCasesProvider
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.AddressInput
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.CitySelector
+import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.ColombiaLocationDialog
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.CountrySelector
+import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.DepartmentSelector
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.LoadingDialog
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.MailInput
 import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.PhoneInput
@@ -40,6 +42,8 @@ import co.edu.udea.compumovil.gr07_20262.lab1.ui.theme.components.contactdata.To
 fun ContactDataScreen() {
   val provider = remember { UseCasesProvider() }
   val fetchCities = remember { provider.fetchCitiesProvider() }
+  val fetchCitiesByState = remember { provider.fetchCitiesByStateProvider() }
+  val fetchStates = remember { provider.fetchStatesProvider() }
   val fetchCuntries = remember { provider.fetchCuntriesProvider() }
 
   var selectedCountry by rememberSaveable { mutableStateOf("") }
@@ -50,6 +54,14 @@ fun ContactDataScreen() {
 
   var isLoadingCountries by remember { mutableStateOf(true) }
   var isLoadingCities by remember { mutableStateOf(false) }
+
+  // Estados de departamento, ciudad y dirección
+  var department by rememberSaveable { mutableStateOf("") }
+  var city by rememberSaveable { mutableStateOf("") }
+  var address by rememberSaveable { mutableStateOf("") }
+
+  // Controla si el diálogo de Colombia debe mostrarse
+  var showColombiaDialog by rememberSaveable { mutableStateOf(false) }
 
   LaunchedEffect(Unit) {
     isLoadingCountries = true
@@ -65,6 +77,13 @@ fun ContactDataScreen() {
       emptyList()
     }
     isLoadingCities = false
+
+    // Si el país elegido es Colombia, abrimos el diálogo emergente
+    if (selectedCountry.equals("Colombia", ignoreCase = true)) {
+      showColombiaDialog = true
+    } else {
+      department = "" // Limpiar departamento si no es Colombia
+    }
   }
 
   Scaffold(
@@ -74,11 +93,31 @@ fun ContactDataScreen() {
       cities = cities,
       onSelectCountry = onSelectCountry,
       countries = countries,
-      selectedCountry = selectedCountry
+      selectedCountry = selectedCountry,
+      department = department,
+      onDepartmentChange = { department = it },
+      city = city,
+      onCityChange = { city = it },
+      address = address,
+      onAddressChange = { address = it }
     )
   }
 
   LoadingDialog(isLoading = isLoadingCountries || isLoadingCities)
+
+  if (showColombiaDialog) {
+    ColombiaLocationDialog(
+      fetchStates = fetchStates,
+      fetchCitiesByState = fetchCitiesByState,
+      onDismiss = { showColombiaDialog = false },
+      onAccept = { departamentoElegido, ciudadElegida, direccionElegida ->
+        department = departamentoElegido
+        city = ciudadElegida
+        address = direccionElegida
+        showColombiaDialog = false
+      }
+    )
+  }
 }
 
 @Composable
@@ -87,7 +126,13 @@ fun Content(
   onSelectCountry: (String) -> Unit,
   countries: List<String>,
   cities: List<String>,
-  selectedCountry: String
+  selectedCountry: String,
+  department: String,
+  onDepartmentChange: (String) -> Unit,
+  city: String,
+  onCityChange: (String) -> Unit,
+  address: String,
+  onAddressChange: (String) -> Unit
 ) {
   val scrollState = rememberScrollState()
 
@@ -98,17 +143,16 @@ fun Content(
   ) {
     var phone by rememberSaveable { mutableStateOf("") }
     var mail by rememberSaveable { mutableStateOf("") }
-    var city by rememberSaveable { mutableStateOf("") }
-    var address by rememberSaveable { mutableStateOf("") }
 
     val onNext = {
-      val logText = buildLogString(phone, address, mail, selectedCountry, city)
+      val logText = buildLogString(phone, address, mail, selectedCountry, department, city)
       Log.i("Información de contacto", logText)
     }
 
     val invalidAddress: () -> Boolean = {
       val addressRegex = Regex(
-        """^(Calle|Cra?\.?|Carrera|Cl\.?|Transversal|Tv\.?|Diagonal|Dg\.?)\s+\d+[A-Za-z]?\s*#\s*\d+[A-Za-z]?\s*-\s*\d+$"""
+        """^(Calle|Cra?\.?|Carrera|Cl\.?|Transversal|Tv\.?|Diagonal|Dg\.?)\s+\d+[A-Za-z]?(\s*#\s*\d+[A-Za-z]?\s*-\s*\d+)?$""",
+        RegexOption.IGNORE_CASE
       )
       address.isNotEmpty() && !address.matches(addressRegex)
     }
@@ -132,8 +176,6 @@ fun Content(
 
     val onPhoneChange: (String) -> Unit = { phone = it }
     val onMailChange: (String) -> Unit = { mail = it }
-    val onCityChange: (String) -> Unit = { city = it }
-    val onAddressChange: (String) -> Unit = { address = it }
 
     FormInputs(
       phone,
@@ -144,8 +186,12 @@ fun Content(
       onMailChange,
       countries,
       onSelectCountry,
+      selectedCountry,
+      department,
+      onDepartmentChange,
       cities,
       onCityChange,
+      city,
       address,
       invalidAddress,
       onAddressChange,
@@ -166,7 +212,7 @@ fun Content(
       Button(
         { onNext() },
         enabled = !invalidPhoneNumber() && phone.isNotEmpty() && !invalidEmail()
-            && mail.isNotEmpty() && selectedCountry.isNotBlank() && !invalidAddress()
+                && mail.isNotEmpty() && selectedCountry.isNotBlank() && !invalidAddress()
       ) {
         Text(stringResource(R.string.next))
       }
@@ -184,10 +230,14 @@ private fun FormInputs(
   onMailChange: (String) -> Unit,
   countries: List<String>,
   onSelectCountry: (String) -> Unit,
+  selectedCountry: String,
+  department: String,
+  onDepartmentChange: (String) -> Unit,
   cities: List<String>,
   onCityChange: (String) -> Unit,
+  city: String,
   address: String,
-  validAddress: () -> Boolean,
+  invalidAddress: () -> Boolean,
   onAddressChange: (String) -> Unit,
   isVertical: Boolean
 ) {
@@ -199,15 +249,21 @@ private fun FormInputs(
     verticalArrangement = Arrangement.spacedBy(16.dp),
     maxItemsInEachRow = if (isVertical) 1 else 2
   ) {
-
     Box(Modifier.weight(1f)) { PhoneInput(phone, invalidPhoneNumber, onPhoneChange) }
     Box(Modifier.weight(1f)) { MailInput(mail, invalidEmail, onMailChange) }
-    Box(Modifier.weight(1f)) { CountrySelector(countries, onSelectCountry) }
-    Box(Modifier.weight(1f)) { CitySelector(cities, onCityChange) }
+    Box(Modifier.weight(1f)) { CountrySelector(selectedCountry, countries, onSelectCountry) }
+    
+    if (selectedCountry.equals("Colombia", ignoreCase = true)) {
+        Box(Modifier.weight(1f)) { 
+            DepartmentSelector(department, onDepartmentChange) 
+        }
+    }
+    
+    Box(Modifier.weight(1f)) { CitySelector(city, cities, onCityChange) }
     Box(Modifier.weight(1f)) {
       AddressInput(
         address,
-        invalidAddress = validAddress,
+        invalidAddress = invalidAddress,
         onAddressChange = onAddressChange
       )
     }
@@ -215,20 +271,15 @@ private fun FormInputs(
 }
 
 private fun buildLogString(
-  phone: String, address: String, mail: String, selectedCountry: String, city: String
+  phone: String, address: String, mail: String, selectedCountry: String, department: String, city: String
 ): String {
   val stringBuilder = StringBuilder()
-
-  stringBuilder.append("Información de contacto\n")
+  stringBuilder.append("Información de contacto:\n")
   stringBuilder.append("Teléfono: $phone\n")
-
   if (address.isNotEmpty()) stringBuilder.append("Dirección: $address\n")
-
   stringBuilder.append("Email: $mail\n")
-  stringBuilder.append("Pais: $selectedCountry\n")
-
+  stringBuilder.append("País: $selectedCountry\n")
+  if (department.isNotEmpty()) stringBuilder.append("Departamento: $department\n")
   if (city.isNotEmpty()) stringBuilder.append("Ciudad: $city\n")
-
-  val logText = stringBuilder.toString()
-  return logText
+  return stringBuilder.toString().trim()
 }

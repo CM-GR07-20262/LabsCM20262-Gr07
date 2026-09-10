@@ -66,7 +66,7 @@ fun FechaNacimientoSelector(
           val dateMillis = datePickerState.selectedDateMillis
           if (dateMillis != null) {
             // Formatear fecha
-            val formatter = SimpleDateFormat("dd/MM/yyy", Locale.getDefault())
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             formatter.timeZone = TimeZone.getTimeZone("UTC")
             val formatedDate = formatter.format(Date(dateMillis))
             onSetFechaDeNacimiento(formatedDate)

@@ -24,4 +24,6 @@
     <string name="invalid_phone_numer_message">Please make sure to enter a valid phone number</string>
     <string name="invalid_address_message">Please make sure to enter a valid address</string>
     <string name="los_campos_marcados_con_son_obligatorios">Fields marked with * are required</string>
+    <string name="colombia_location_title">Location in Colombia</string>
+    <string name="department">Department</string>
 </resources>

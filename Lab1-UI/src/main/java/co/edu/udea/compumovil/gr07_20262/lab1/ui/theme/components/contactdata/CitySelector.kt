@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,9 +28,19 @@ import java.util.Locale.getDefault
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CitySelector(cities: List<String>, onSelectCity: (String) -> Unit) {
+fun CitySelector(
+  city: String,
+  cities: List<String>,
+  onSelectCity: (String) -> Unit
+) {
   var expanded by remember { mutableStateOf(false) }
-  var citiesFilter by remember { mutableStateOf("") }
+  var citiesFilter by remember { mutableStateOf(city) }
+
+  // Sincronizar el filtro si el valor externo cambia
+  LaunchedEffect(city) {
+    citiesFilter = city
+  }
+
   ExposedDropdownMenuBox(
     expanded = expanded,
     onExpandedChange = { expanded = !expanded }
@@ -38,6 +49,7 @@ fun CitySelector(cities: List<String>, onSelectCity: (String) -> Unit) {
       value = citiesFilter,
       onValueChange = {
         citiesFilter = it
+        onSelectCity(it) // Informar cambio manual también
         expanded = true
       },
       label = { Text(stringResource(R.string.city)) },
@@ -69,57 +81,22 @@ fun CitySelector(cities: List<String>, onSelectCity: (String) -> Unit) {
             expanded = false
           }
         )
-
       }
     }
   }
 }
 
-
 @Preview
 @Composable
 private fun PreviewCitySelector() {
-  val cities = listOf(
-    "Bogotá",
-    "Medellín",
-    "Cali",
-    "Barranquilla",
-    "Cartagena",
-    "Cúcuta",
-    "Bucaramanga",
-    "Pereira",
-    "Santa Marta",
-    "Ibagué",
-    "Manizales",
-    "Villavicencio",
-    "Pasto",
-    "Montería",
-    "Neiva",
-    "Armenia",
-    "Popayán",
-    "Sincelejo",
-    "Valledupar",
-    "Tunja",
-    "Riohacha",
-    "Quibdó",
-    "Florencia",
-    "Yopal",
-    "Buenaventura",
-    "Palmira",
-    "Soacha",
-    "Apartadó",
-    "Turbo",
-    "Carepa"
-  )
+  val cities = listOf("Bogotá", "Medellín", "Cali")
   var city by remember { mutableStateOf("") }
-  val onSelectCity: (String) -> Unit = { city = it }
 
   Column(
     Modifier.fillMaxSize(),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    CitySelector(cities, onSelectCity)
+    CitySelector(city, cities) { city = it }
   }
-
 }
